@@ -52,7 +52,7 @@ class MainWindow(QWidget):
         self.shbox2.addWidget(self.table_gbox2)
 
         self._create_monday_table()
-        self._create_monday_table()
+        self._create_tuesday_table()
 
 
         self.update_shedule_button = QPushButton("Update")
@@ -114,12 +114,12 @@ class MainWindow(QWidget):
         self.monday_table.resizeRowsToContents()
 
     def _update_tuesday_table(self):
-        self.cursor.execute("SELECT * FROM timetable WHERE day='Tuesday'")
-        records = list(self.cursor.fetchall())
+        self.cursor.execute("SELECT * FROM timetable WHERE day = 'Tuesday'")
+        rec = list(self.cursor.fetchall())
 
-        self.tuesday_table.setRowCount(len(records))
+        self.tuesday_table.setRowCount(len(rec))
 
-        for i, r in enumerate(records):
+        for i, r in enumerate(rec):
             r = list(r)
             joinButton = QPushButton("Join")
 
