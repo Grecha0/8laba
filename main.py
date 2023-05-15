@@ -38,25 +38,30 @@ class MainWindow(QWidget):
 
         self.table_gbox1 = QGroupBox("Monday")
         self.table_gbox2 = QGroupBox("Tuesday")
+        self.table_gbox3 = QGroupBox("Wednesday")
 
         self.svbox = QVBoxLayout()
         self.shbox1 = QHBoxLayout()
         self.shbox2 = QHBoxLayout()
         self.shbox3 = QHBoxLayout()
+        self.shbox4 = QHBoxLayout()
 
         self.svbox.addLayout(self.shbox1)
         self.svbox.addLayout(self.shbox2)
         self.svbox.addLayout(self.shbox3)
+        self.svbox.addLayout(self.shbox4)
 
         self.shbox1.addWidget(self.table_gbox1)
         self.shbox2.addWidget(self.table_gbox2)
+        self.shbox3.addWidget(self.table_gbox3)
 
         self._create_monday_table()
         self._create_tuesday_table()
+        self._create_wednesday_table()
 
 
         self.update_shedule_button = QPushButton("Update")
-        self.shbox3.addWidget(self.update_shedule_button)
+        self.shbox4.addWidget(self.update_shedule_button)
         self.update_shedule_button.clicked.connect(self._update_shedule)
 
         self.shedule_tab.setLayout(self.svbox)
@@ -87,13 +92,26 @@ class MainWindow(QWidget):
         self.mvbox.addWidget(self.tuesday_table)
         self.table_gbox2.setLayout(self.mvbox)
 
+    def _create_wednesday_table(self):
+        self.wednesday_table = QTableWidget()
+        self.wednesday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.wednesday_table.setColumnCount(5)
+        self.wednesday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium", ""])
+
+        self._update_wednesday_table()
+
+        self.mvbox = QVBoxLayout()
+        self.mvbox.addWidget(self.wednesday_table)
+        self.table_gbox3.setLayout(self.mvbox)
+
 
 
     def _update_monday_table(self):
         self.cursor.execute("SELECT * FROM timetable WHERE day='Monday'")
         records = list(self.cursor.fetchall())
 
-        self.monday_table.setRowCount(len(records))
+        self.monday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -117,7 +135,7 @@ class MainWindow(QWidget):
         self.cursor.execute("SELECT * FROM timetable WHERE day = 'Tuesday'")
         records = list(self.cursor.fetchall())
 
-        self.tuesday_table.setRowCount(len(records))
+        self.tuesday_table.setRowCount(len(records) + 1)
 
         for i, r in enumerate(records):
             r = list(r)
@@ -136,6 +154,30 @@ class MainWindow(QWidget):
             joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
 
         self.tuesday_table.resizeRowsToContents()
+
+    def _update_wednesday_table(self):
+        self.cursor.execute("SELECT * FROM timetable WHERE day = 'Wednesday'")
+        records = list(self.cursor.fetchall())
+
+        self.wednesday_table.setRowCount(len(records) + 1)
+
+        for i, r in enumerate(records):
+            r = list(r)
+            joinButton = QPushButton("Join")
+
+            self.wednesday_table.setItem(i, 0,
+                                      QTableWidgetItem(str(r[1])))
+            self.wednesday_table.setItem(i, 1,
+                                      QTableWidgetItem(str(r[4])))
+            self.wednesday_table.setItem(i, 2,
+                                      QTableWidgetItem(str(r[3])))
+            self.wednesday_table.setItem(i, 3,
+                                      QTableWidgetItem(str(r[5])))
+            self.wednesday_table.setCellWidget(i, 4, joinButton)
+
+            joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
+
+        self.wednesday_table.resizeRowsToContents()
 
     def _change_day_from_table(self, rowNum, day):
         row = list()
