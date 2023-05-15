@@ -34,7 +34,7 @@ class MainWindow(QWidget):
 
     def _create_shedule_tab(self):
         self.shedule_tab = QWidget()
-        self.tabs.addTab(self.shedule_tab, "Shedule")
+        self.tabs.addTab(self.shedule_tab, "Четная неделя")
 
         self.table_gbox1 = QGroupBox("Monday")
         self.table_gbox2 = QGroupBox("Tuesday")
@@ -66,7 +66,7 @@ class MainWindow(QWidget):
         self.monday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
         self.monday_table.setColumnCount(5)
-        self.monday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium"])
+        self.monday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium", ""])
 
         self._update_monday_table()
 
@@ -78,8 +78,8 @@ class MainWindow(QWidget):
         self.tuesday_table = QTableWidget()
         self.tuesday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.tuesday_table.setColumnCount(4)
-        self.tuesday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium"])
+        self.tuesday_table.setColumnCount(5)
+        self.tuesday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium", ""])
 
         self._update_tuesday_table()
 
@@ -93,7 +93,7 @@ class MainWindow(QWidget):
         self.cursor.execute("SELECT * FROM timetable WHERE day='Monday'")
         records = list(self.cursor.fetchall())
 
-        self.monday_table.setRowCount(len(records) + 1)
+        self.monday_table.setRowCount(len(records))
 
         for i, r in enumerate(records):
             r = list(r)
@@ -112,6 +112,30 @@ class MainWindow(QWidget):
             joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
 
         self.monday_table.resizeRowsToContents()
+
+    def _update_tuesday_table(self):
+        self.cursor.execute("SELECT * FROM timetable WHERE day='Tuesday'")
+        records = list(self.cursor.fetchall())
+
+        self.tuesday_table.setRowCount(len(records))
+
+        for i, r in enumerate(records):
+            r = list(r)
+            joinButton = QPushButton("Join")
+
+            self.monday_table.setItem(i, 0,
+                                      QTableWidgetItem(str(r[1])))
+            self.monday_table.setItem(i, 1,
+                                      QTableWidgetItem(str(r[4])))
+            self.monday_table.setItem(i, 2,
+                                      QTableWidgetItem(str(r[3])))
+            self.monday_table.setItem(i, 3,
+                                      QTableWidgetItem(str(r[5])))
+            self.monday_table.setCellWidget(i, 4, joinButton)
+
+            joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
+
+        self.tuesday_table.resizeRowsToContents()
 
     def _change_day_from_table(self, rowNum, day):
         row = list()
