@@ -22,6 +22,7 @@ class MainWindow(QWidget):
         self.vbox.addWidget(self.tabs)
 
         self._create_shedule_tab()
+        self._create_shedule_tab2()
 
     def _connect_to_db(self):
         self.conn = psycopg2.connect(database="8laba",
@@ -81,6 +82,29 @@ class MainWindow(QWidget):
 
         self.shedule_tab.setLayout(self.svbox)
 
+    def _create_shedule_tab2(self):
+        self.shedule_tab = QWidget()
+        self.tabs.addTab(self.shedule_tab, "Нечетная неделя")
+
+        self.table_gbox1 = QGroupBox("Monday")
+
+        self.svbox = QVBoxLayout()
+        self.shbox1 = QHBoxLayout()
+        self.shbox2 = QHBoxLayout()
+
+        self.svbox.addLayout(self.shbox1)
+        self.svbox.addLayout(self.shbox2)
+
+        self.shbox1.addWidget(self.table_gbox1)
+
+        self._create_monday_table2()
+
+        self.update_shedule_button = QPushButton("Update")
+        self.shbox2.addWidget(self.update_shedule_button)
+        self.update_shedule_button.clicked.connect(self._update_shedule)
+
+        self.shedule_tab.setLayout(self.svbox)
+
     def _create_monday_table(self):
         self.monday_table = QTableWidget()
         self.monday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -92,6 +116,19 @@ class MainWindow(QWidget):
 
         self.mvbox = QVBoxLayout()
         self.mvbox.addWidget(self.monday_table)
+        self.table_gbox1.setLayout(self.mvbox)
+
+    def _create_monday_table2(self):
+        self.monday_table2 = QTableWidget()
+        self.monday_table2.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.monday_table2.setColumnCount(5)
+        self.monday_table2.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium", ""])
+
+        self._update_monday_table2()
+
+        self.mvbox = QVBoxLayout()
+        self.mvbox.addWidget(self.monday_table2)
         self.table_gbox1.setLayout(self.mvbox)
 
     def _create_tuesday_table(self):
@@ -184,6 +221,30 @@ class MainWindow(QWidget):
             joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
 
         self.monday_table.resizeRowsToContents()
+
+    def _update_monday_table2(self):
+        self.cursor.execute("SELECT * FROM timetable2 WHERE day='Monday'")
+        records = list(self.cursor.fetchall())
+
+        self.monday_table2.setRowCount(len(records) + 1)
+
+        for i, r in enumerate(records):
+            r = list(r)
+            joinButton = QPushButton("Join")
+
+            self.monday_table2.setItem(i, 0,
+                                      QTableWidgetItem(str(r[1])))
+            self.monday_table2.setItem(i, 1,
+                                      QTableWidgetItem(str(r[4])))
+            self.monday_table2.setItem(i, 2,
+                                      QTableWidgetItem(str(r[3])))
+            self.monday_table2.setItem(i, 3,
+                                      QTableWidgetItem(str(r[5])))
+            self.monday_table2.setCellWidget(i, 4, joinButton)
+
+            joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
+
+        self.monday_table2.resizeRowsToContents()
 
     def _update_tuesday_table(self):
         self.cursor.execute("SELECT * FROM timetable WHERE day = 'Tuesday'")
