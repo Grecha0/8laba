@@ -40,6 +40,7 @@ class MainWindow(QWidget):
         self.table_gbox2 = QGroupBox("Tuesday")
         self.table_gbox3 = QGroupBox("Wednesday")
         self.table_gbox4 = QGroupBox("Thursday")
+        self.table_gbox5 = QGroupBox("Friday")
 
         self.svbox = QVBoxLayout()
         self.shbox1 = QHBoxLayout()
@@ -47,26 +48,30 @@ class MainWindow(QWidget):
         self.shbox3 = QHBoxLayout()
         self.shbox4 = QHBoxLayout()
         self.shbox5 = QHBoxLayout()
+        self.shbox6 = QHBoxLayout()
 
         self.svbox.addLayout(self.shbox1)
         self.svbox.addLayout(self.shbox2)
         self.svbox.addLayout(self.shbox3)
         self.svbox.addLayout(self.shbox4)
         self.svbox.addLayout(self.shbox5)
+        self.svbox.addLayout(self.shbox6)
 
         self.shbox1.addWidget(self.table_gbox1)
         self.shbox2.addWidget(self.table_gbox2)
         self.shbox3.addWidget(self.table_gbox3)
         self.shbox4.addWidget(self.table_gbox4)
+        self.shbox5.addWidget(self.table_gbox5)
 
         self._create_monday_table()
         self._create_tuesday_table()
         self._create_wednesday_table()
         self._create_thursday_table()
+        self._create_friday_table()
 
 
         self.update_shedule_button = QPushButton("Update")
-        self.shbox5.addWidget(self.update_shedule_button)
+        self.shbox6.addWidget(self.update_shedule_button)
         self.update_shedule_button.clicked.connect(self._update_shedule)
 
         self.shedule_tab.setLayout(self.svbox)
@@ -122,6 +127,19 @@ class MainWindow(QWidget):
         self.mvbox = QVBoxLayout()
         self.mvbox.addWidget(self.thursday_table)
         self.table_gbox4.setLayout(self.mvbox)
+
+    def _create_friday_table(self):
+        self.friday_table = QTableWidget()
+        self.friday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.friday_table.setColumnCount(5)
+        self.friday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium", ""])
+
+        self._update_friday_table()
+
+        self.mvbox = QVBoxLayout()
+        self.mvbox.addWidget(self.friday_table)
+        self.table_gbox5.setLayout(self.mvbox)
 
 
 
@@ -220,6 +238,30 @@ class MainWindow(QWidget):
             joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
 
         self.thursday_table.resizeRowsToContents()
+
+    def _update_friday_table(self):
+        self.cursor.execute("SELECT * FROM timetable WHERE day = 'Friday'")
+        records = list(self.cursor.fetchall())
+
+        self.friday_table.setRowCount(len(records) + 1)
+
+        for i, r in enumerate(records):
+            r = list(r)
+            joinButton = QPushButton("Join")
+
+            self.friday_table.setItem(i, 0,
+                                      QTableWidgetItem(str(r[1])))
+            self.friday_table.setItem(i, 1,
+                                      QTableWidgetItem(str(r[4])))
+            self.friday_table.setItem(i, 2,
+                                      QTableWidgetItem(str(r[3])))
+            self.friday_table.setItem(i, 3,
+                                      QTableWidgetItem(str(r[5])))
+            self.friday_table.setCellWidget(i, 4, joinButton)
+
+            joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
+
+        self.friday_table.resizeRowsToContents()
 
     def _change_day_from_table(self, rowNum, day):
         row = list()
