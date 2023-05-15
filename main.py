@@ -115,23 +115,23 @@ class MainWindow(QWidget):
 
     def _update_tuesday_table(self):
         self.cursor.execute("SELECT * FROM timetable WHERE day = 'Tuesday'")
-        rec = list(self.cursor.fetchall())
+        records = list(self.cursor.fetchall())
 
-        self.tuesday_table.setRowCount(len(rec))
+        self.tuesday_table.setRowCount(len(records))
 
-        for i, r in enumerate(rec):
+        for i, r in enumerate(records):
             r = list(r)
             joinButton = QPushButton("Join")
 
-            self.monday_table.setItem(i, 0,
+            self.tuesday_table.setItem(i, 0,
                                       QTableWidgetItem(str(r[1])))
-            self.monday_table.setItem(i, 1,
+            self.tuesday_table.setItem(i, 1,
                                       QTableWidgetItem(str(r[4])))
-            self.monday_table.setItem(i, 2,
+            self.tuesday_table.setItem(i, 2,
                                       QTableWidgetItem(str(r[3])))
-            self.monday_table.setItem(i, 3,
+            self.tuesday_table.setItem(i, 3,
                                       QTableWidgetItem(str(r[5])))
-            self.monday_table.setCellWidget(i, 4, joinButton)
+            self.tuesday_table.setCellWidget(i, 4, joinButton)
 
             joinButton.clicked.connect(lambda ch, num=i: self._change_day_from_table(num))
 
