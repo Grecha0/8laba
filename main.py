@@ -62,11 +62,11 @@ class MainWindow(QWidget):
         self.svbox.addLayout(self.shbox7)
 
         self.shbox1.addWidget(self.table_gbox1)
-        self.shbox2.addWidget(self.table_gbox2)
+        self.shbox1.addWidget(self.table_gbox2)
         self.shbox3.addWidget(self.table_gbox3)
-        self.shbox4.addWidget(self.table_gbox4)
+        self.shbox3.addWidget(self.table_gbox4)
         self.shbox5.addWidget(self.table_gbox5)
-        self.shbox6.addWidget(self.table_gbox6)
+        self.shbox5.addWidget(self.table_gbox6)
 
         self._create_monday_table()
         self._create_tuesday_table()
@@ -111,11 +111,11 @@ class MainWindow(QWidget):
         self.svbox.addLayout(self.shbox7)
 
         self.shbox1.addWidget(self.table_gbox1)
-        self.shbox2.addWidget(self.table_gbox2)
+        self.shbox1.addWidget(self.table_gbox2)
         self.shbox3.addWidget(self.table_gbox3)
-        self.shbox4.addWidget(self.table_gbox4)
+        self.shbox3.addWidget(self.table_gbox4)
         self.shbox5.addWidget(self.table_gbox5)
-        self.shbox6.addWidget(self.table_gbox6)
+        self.shbox5.addWidget(self.table_gbox6)
 
         self._create_monday_table2()
         self._create_tuesday_table2()
